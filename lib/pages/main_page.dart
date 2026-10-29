@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:venera/foundation/appdata.dart';
-import 'package:venera/pages/categories_page.dart';
-import 'package:venera/pages/search_page.dart';
+import 'package:venera/pages/explore/categories_page.dart';
+import 'package:venera/pages/search/search_page.dart';
 import 'package:venera/pages/settings/settings_page.dart';
 import 'package:venera/utils/translations.dart';
 
