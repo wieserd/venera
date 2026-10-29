@@ -28,6 +28,12 @@ part 'favorites.dart';
 
 part 'parser.dart';
 
+part 'parser_explore_category.dart';
+
+part 'parser_search_favorites.dart';
+
+part 'parser_comic_details.dart';
+
 part 'models.dart';
 
 part 'types.dart';

@@ -7,7 +7,6 @@ import 'package:venera/foundation/appdata.dart';
 import 'package:venera/foundation/favorites.dart';
 import 'package:venera/utils/data_sync.dart';
 import 'package:venera/utils/translations.dart';
-import '../foundation/global_state.dart';
 import 'package:venera/foundation/follow_updates.dart';
 
 class FollowUpdatesWidget extends StatefulWidget {
@@ -17,8 +16,7 @@ class FollowUpdatesWidget extends StatefulWidget {
   State<FollowUpdatesWidget> createState() => _FollowUpdatesWidgetState();
 }
 
-class _FollowUpdatesWidgetState
-    extends AutomaticGlobalState<FollowUpdatesWidget> {
+class _FollowUpdatesWidgetState extends State<FollowUpdatesWidget> {
   int _count = 0;
 
   String? get folder => appdata.settings["followUpdatesFolder"];
@@ -40,15 +38,24 @@ class _FollowUpdatesWidgetState
   }
 
   void updateCount() {
-    setState(() {
-      getCount();
-    });
+    if (mounted) {
+      setState(() {
+        getCount();
+      });
+    }
   }
 
   @override
   void initState() {
     super.initState();
+    _followUpdatesNotifier.addListener(updateCount);
     getCount();
+  }
+
+  @override
+  void dispose() {
+    _followUpdatesNotifier.removeListener(updateCount);
+    super.dispose();
   }
 
   @override
@@ -107,8 +114,6 @@ class _FollowUpdatesWidgetState
     );
   }
 
-  @override
-  Object? get key => 'FollowUpdatesWidget';
 }
 
 class FollowUpdatesPage extends StatefulWidget {
@@ -118,7 +123,7 @@ class FollowUpdatesPage extends StatefulWidget {
   State<FollowUpdatesPage> createState() => _FollowUpdatesPageState();
 }
 
-class _FollowUpdatesPageState extends AutomaticGlobalState<FollowUpdatesPage> {
+class _FollowUpdatesPageState extends State<FollowUpdatesPage> {
   String? get folder => appdata.settings["followUpdatesFolder"];
 
   var updatedComics = <FavoriteItemWithUpdateInfo>[];
@@ -152,11 +157,18 @@ class _FollowUpdatesPageState extends AutomaticGlobalState<FollowUpdatesPage> {
   @override
   void initState() {
     super.initState();
+    _followUpdatesNotifier.addListener(updateComics);
     if (folder != null) {
       allComics = LocalFavoritesManager().getComicsWithUpdatesInfo(folder!);
       sortComics();
       updatedComics = allComics.where((c) => c.hasNewUpdate).toList();
     }
+  }
+
+  @override
+  void dispose() {
+    _followUpdatesNotifier.removeListener(updateComics);
+    super.dispose();
   }
 
   @override
@@ -509,12 +521,12 @@ class _FollowUpdatesPageState extends AutomaticGlobalState<FollowUpdatesPage> {
     loadingController.close();
 
     if (updated > 0) {
-      GlobalState.findOrNull<_FollowUpdatesWidgetState>()?.updateCount();
-      updateComics();
+      updateFollowUpdatesUI();
     }
   }
 
   void updateComics() {
+    if (!mounted) return;
     if (folder == null) {
       setState(() {
         allComics = [];
@@ -528,9 +540,6 @@ class _FollowUpdatesPageState extends AutomaticGlobalState<FollowUpdatesPage> {
       updatedComics = allComics.where((c) => c.hasNewUpdate).toList();
     });
   }
-
-  @override
-  Object? get key => 'FollowUpdatesPage';
 }
 
 /// Background service for checking updates
@@ -590,8 +599,13 @@ abstract class FollowUpdatesService {
   }
 }
 
+final _followUpdatesNotifier = _FollowUpdatesNotifier();
+
+class _FollowUpdatesNotifier with ChangeNotifier {
+  void notify() => notifyListeners();
+}
+
 /// Update the UI of follow updates.
 void updateFollowUpdatesUI() {
-  GlobalState.findOrNull<_FollowUpdatesWidgetState>()?.updateCount();
-  GlobalState.findOrNull<_FollowUpdatesPageState>()?.updateComics();
+  _followUpdatesNotifier.notify();
 }

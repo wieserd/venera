@@ -3,7 +3,6 @@ import 'package:venera/components/components.dart';
 import 'package:venera/foundation/app.dart';
 import 'package:venera/foundation/appdata.dart';
 import 'package:venera/foundation/comic_source/comic_source.dart';
-import 'package:venera/foundation/global_state.dart';
 import 'package:venera/foundation/res.dart';
 import 'package:venera/pages/comic_source_page.dart';
 import 'package:venera/pages/settings/settings_page.dart';
@@ -27,6 +26,8 @@ class _ExplorePageState extends State<ExplorePage>
 
   late List<String> pages;
 
+  final _pageKeys = <String, GlobalKey<_SingleExplorePageState>>{};
+
   void onSettingsChanged() {
     var explorePages = List<String>.from(appdata.settings["explore_pages"]);
     var all = ComicSource.all()
@@ -46,10 +47,10 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   void onNaviItemTapped(int index) {
-    if (index == 2) {
+    if (index == 2 && pages.isNotEmpty) {
       int page = controller.index;
       String currentPageId = pages[page];
-      GlobalState.find<_SingleExplorePageState>(currentPageId).toTop();
+      _pageKeys[currentPageId]?.currentState?.toTop();
     }
   }
 
@@ -91,9 +92,10 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   void refresh() {
+    if (pages.isEmpty) return;
     int page = controller.index;
     String currentPageId = pages[page];
-    GlobalState.find<_SingleExplorePageState>(currentPageId).refresh();
+    _pageKeys[currentPageId]?.currentState?.refresh();
   }
 
   Widget buildFAB() => Material(
@@ -112,7 +114,10 @@ class _ExplorePageState extends State<ExplorePage>
   }
 
   Widget buildBody(String i) => Material(
-        child: _SingleExplorePage(i, key: PageStorageKey(i)),
+        child: _SingleExplorePage(
+          i,
+          key: _pageKeys.putIfAbsent(i, () => GlobalKey<_SingleExplorePageState>()),
+        ),
       );
 
   Widget buildEmpty() {
@@ -239,7 +244,7 @@ class _SingleExplorePage extends StatefulWidget {
   State<_SingleExplorePage> createState() => _SingleExplorePageState();
 }
 
-class _SingleExplorePageState extends AutomaticGlobalState<_SingleExplorePage>
+class _SingleExplorePageState extends State<_SingleExplorePage>
     with AutomaticKeepAliveClientMixin<_SingleExplorePage> {
   late final ExplorePageData data;
 
@@ -322,8 +327,6 @@ class _SingleExplorePageState extends AutomaticGlobalState<_SingleExplorePage>
     }
   }
 
-  @override
-  Object? get key => widget.title;
 
   @override
   void refresh() {

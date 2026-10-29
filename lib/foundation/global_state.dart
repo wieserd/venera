@@ -1,5 +1,8 @@
 import 'package:flutter/widgets.dart';
 
+/// Deprecated: The manual state registry pattern has been superseded by
+/// standard Flutter reactive patterns (ChangeNotifier, GlobalKey, and InheritedWidgets).
+@deprecated
 abstract class GlobalState {
   static final _state = <Pair<Object?, State>>[];
 
@@ -38,6 +41,8 @@ class Pair<K, V> {
   Pair(this.left, this.right);
 }
 
+/// Deprecated: Use standard [State] with [ChangeNotifier] listeners or [GlobalKey].
+@deprecated
 abstract class AutomaticGlobalState<T extends StatefulWidget>
     extends State<T> {
   @override

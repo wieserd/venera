@@ -306,7 +306,7 @@ class _ComicImageState extends State<ComicImage> with WidgetsBindingObserver {
                   cursor: SystemMouseCursors.click,
                   child: Listener(
                     onPointerDown: (details) {
-                      GlobalState.find<_ReaderGestureDetectorState>().ignoreNextTap();
+                      context.readerScaffold._gestureDetectorState?.ignoreNextTap();
                       setState(() {
                         _loadingProgress = null;
                         _lastException = null;

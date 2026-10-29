@@ -9,7 +9,7 @@ class _ReaderGestureDetector extends StatefulWidget {
   State<_ReaderGestureDetector> createState() => _ReaderGestureDetectorState();
 }
 
-class _ReaderGestureDetectorState extends AutomaticGlobalState<_ReaderGestureDetector> {
+class _ReaderGestureDetectorState extends State<_ReaderGestureDetector> {
   late TapGestureRecognizer _tapGestureRecognizer;
 
   static const _kDoubleTapMaxTime = Duration(milliseconds: 200);
@@ -339,8 +339,6 @@ class _ReaderGestureDetectorState extends AutomaticGlobalState<_ReaderGestureDet
     _dragListeners.remove(listener);
   }
 
-  @override
-  Object? get key => "reader_gesture";
 
   void copyImage(Offset location) async {
     var controller = reader._imageViewController;
