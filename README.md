@@ -10,7 +10,9 @@ This repository is an actively maintained fork of [venera-app/venera](https://gi
 
 ---
 
-## Improvement Overview Table
+## Improvements & Refactoring
+
+The table below outlines the core differences between the original upstream codebase and this fork:
 
 | Area | Before (Original Upstream) | After (This Fork) | Impact |
 | :--- | :--- | :--- | :--- |
@@ -22,9 +24,8 @@ This repository is an actively maintained fork of [venera-app/venera](https://gi
 | **Repository Hygiene** | Legacy author-specific release debris (`alt_store.json`, `update_alt_store.py`, `fastlane/`, `patch/`, loose root scripts) | Cleaned root directory; custom comic source scripts organized into [`sources/`](sources/) | Clean, reproducible repository standard for open-source forks |
 | **Automated Testing** | Empty `test/` directory (zero unit tests) | Unit test suite under [`test/`](test/) covering settings, context overrides, device IDs, and semver comparison | Prevents regressions, enables automated CI verification |
 
----
-
-## Detailed Improvements
+<details>
+<summary><b>🔍 Expand for In-Depth Architectural & Code Details</b></summary>
 
 ### 1. Strongly Typed Settings Architecture
 * **Modular Configuration**: Decoupled settings management out of `appdata.dart` into a dedicated, strongly-typed [`settings.dart`](lib/foundation/settings.dart).
@@ -67,6 +68,8 @@ Added automated test suites under `test/`:
 * Support for modular JavaScript comic source extensions running on an embedded QuickJS engine.
 * Added Next.js-based reader parser implementation in [`sources/yiff_comics.js`](sources/yiff_comics.js).
 
+</details>
+
 ---
 
 ## Features
@@ -80,7 +83,8 @@ Added automated test suites under `test/`:
 
 ---
 
-## Build from Source
+<details>
+<summary><b>🛠️ Build from Source & Platform Instructions</b></summary>
 
 ### Prerequisites
 1. **Flutter SDK** (>= 3.24 / 3.41): [flutter.dev/docs/get-started/install](https://flutter.dev/docs/get-started/install)
@@ -104,13 +108,16 @@ flutter build apk       # Android APK
 flutter build windows   # Windows Desktop
 ```
 
----
+</details>
 
-## Documentation
+<details>
+<summary><b>📖 Documentation & Developer Guides</b></summary>
 
 * [Writing a Comic Source](doc/comic_source.md)
 * [JavaScript Runtime API](doc/js_api.md)
 * [Headless Mode Guide](doc/headless_doc.md)
+
+</details>
 
 ---
 
