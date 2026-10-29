@@ -1,7 +1,7 @@
 # Venera (Maintained Fork)
 
 [![Flutter](https://img.shields.io/badge/flutter-3.41.4-blue)](https://flutter.dev/)
-[![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Upstream](https://img.shields.io/badge/fork%20of-venera--app%2Fvenera-orange)](https://github.com/venera-app/venera)
 
 A high-performance, cross-platform comic reader supporting local files and dynamic network sources, built with **Flutter** and **Rust**.
@@ -99,4 +99,4 @@ flutter build windows   # Windows Desktop
 
 * **Upstream Project**: [venera-app/venera](https://github.com/venera-app/venera) & [wgh136/PicaComic](https://github.com/wgh136/PicaComic)
 * **Tag Translations**: [EhTagTranslation Database](https://github.com/EhTagTranslation/Database)
-* **License**: [GNU General Public License v3.0](LICENSE)
+* **License**: [MIT License](LICENSE)
