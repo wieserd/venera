@@ -10,9 +10,21 @@ This repository is an actively maintained fork of [venera-app/venera](https://gi
 
 ---
 
-## What We Improved in this Fork
+## Improvement Overview Table
 
-This fork modernizes the application architecture, decomposes monolithic files into modular components, eliminates technical debt, and introduces an automated testing suite:
+| Area | Before (Original Upstream) | After (This Fork) | Impact |
+| :--- | :--- | :--- | :--- |
+| **Settings Architecture** | Untyped flat `Map<String, dynamic>` accessed via string indices (`settings["proxy"]`) inside 374-line `appdata.dart` | Dedicated [`settings.dart`](lib/foundation/settings.dart) with strongly-typed getters/setters and backward-compatible indexing | Compile-time safety, autocomplete, prevents runtime crash typos |
+| **State Management** | Custom `GlobalState` anti-pattern storing raw `State<T>` pointers in a static list | Standard Flutter reactive patterns: `ChangeNotifier`, `GlobalKey<T>`, and inherited widget contexts | Prevents memory leaks, eliminates cross-widget tight coupling |
+| **Monolithic UI (`comic.dart`)** | Single 1,710-line file combining cards, sliver grids, list state, ratings, and filters | Decomposed into [`comic.dart`](lib/components/comic.dart) (818 lines), [`comic_list.dart`](lib/components/comic_list.dart) (410 lines), [`sliver_grid_comics.dart`](lib/components/sliver_grid_comics.dart) (203 lines), and [`star_rating.dart`](lib/components/star_rating.dart) (285 lines) | Clean separation of concerns, easier maintenance and code reuse |
+| **JS Parser (`parser.dart`)** | Single 1,301-line file containing all JS bridge bindings | Decomposed into [`parser.dart`](lib/foundation/comic_source/parser.dart) (199 lines), [`parser_explore_category.dart`](lib/foundation/comic_source/parser_explore_category.dart), [`parser_search_favorites.dart`](lib/foundation/comic_source/parser_search_favorites.dart), and [`parser_comic_details.dart`](lib/foundation/comic_source/parser_comic_details.dart) | Modularity across domains (search, auth, explore, reader) |
+| **Directory Structure (`lib/pages/`)** | 19 loose, unorganized page files dumped flat in `lib/pages/` | Grouped into clean feature modules: `pages/explore/`, `pages/search/`, `pages/library/`, with 4 core shell pages at root | Intuitive navigation for new developers; eliminates "WTF" clutter |
+| **Repository Hygiene** | Legacy author-specific release debris (`alt_store.json`, `update_alt_store.py`, `fastlane/`, `patch/`, loose root scripts) | Cleaned root directory; custom comic source scripts organized into [`sources/`](sources/) | Clean, reproducible repository standard for open-source forks |
+| **Automated Testing** | Empty `test/` directory (zero unit tests) | Unit test suite under [`test/`](test/) covering settings, context overrides, device IDs, and semver comparison | Prevents regressions, enables automated CI verification |
+
+---
+
+## Detailed Improvements
 
 ### 1. Strongly Typed Settings Architecture
 * **Modular Configuration**: Decoupled settings management out of `appdata.dart` into a dedicated, strongly-typed [`settings.dart`](lib/foundation/settings.dart).
@@ -39,14 +51,21 @@ This fork modernizes the application architecture, decomposes monolithic files i
   - `parser_search_favorites.dart` &mdash; Keyword search, account auth, and cloud favorite folders.
   - `parser_comic_details.dart` &mdash; Comic details, reader images, thumbnail decoders, and comments.
 
-### 4. Unit Testing Suite
-* Added unit test suites under `test/`:
-  - `settings_test.dart` &mdash; Validates default values, typed accessors, reactive updates, device ID generation, and reader overrides.
-  - `semver_test.dart` &mdash; Validates semver comparison and hotfix precedence rules.
+### 4. Clean Feature-Based Pages Layout
+Reorganized the 19 flat files in `lib/pages/` into structured feature subdirectories:
+* `pages/explore/` &mdash; Explore feeds, category browsing, rankings, and source views.
+* `pages/search/` &mdash; Keyword search, search results, and aggregated multi-source search.
+* `pages/library/` &mdash; Reading history, local downloads, file imports, and update trackers.
+* Core app root pages retained cleanly at `pages/` (`main_page.dart`, `home_page.dart`, `auth_page.dart`, `webview.dart`).
 
-### 5. Extended Custom Comic Sources
+### 5. Unit Testing Suite
+Added automated test suites under `test/`:
+* `settings_test.dart` &mdash; Validates default values, typed accessors, reactive updates, device ID generation, and reader overrides.
+* `semver_test.dart` &mdash; Validates semver comparison and hotfix precedence rules.
+
+### 6. Extended Custom Comic Sources
 * Support for modular JavaScript comic source extensions running on an embedded QuickJS engine.
-* Added Next.js-based reader parser implementation (`yiff_comics.js`).
+* Added Next.js-based reader parser implementation in [`sources/yiff_comics.js`](sources/yiff_comics.js).
 
 ---
 
